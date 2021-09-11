@@ -4,7 +4,11 @@ const bcrypt = require('bcrypt');
 
 // Create our User model 
 
-class User extends Model {}
+class User extends Model {
+    checkPassword(loginPw) {
+        return bcrypt.compareSync(loginPw, this.password);
+    }
+}
 
 //  Define table columns and configuration
 
@@ -24,7 +28,7 @@ User.init(
         },
         // define a username column
         username: {
-            
+
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -38,7 +42,7 @@ User.init(
             validate: {
                 isEmail: true
             }
-            
+
         },
         // define a password column
         password: {
@@ -56,7 +60,12 @@ User.init(
             // Setup a hook to perform before a create, so that we hash the password before it is stored in the user table
             async beforeCreate(newUserData) {
                 newUserData.password = await bcrypt.hash(newUserData.password, 10);
-                return newUserData; 
+                return newUserData;
+            },
+            // Setup up beforeUpdate lifecycle event / hook functionality
+            async beforeUpdate(updatedUserData) {
+                updatedUserData.password = await bcrypt.hash(updatedUserData.password, 10);
+                return updatedUserData;
             }
         },
         // Table configuration options go here
@@ -72,6 +81,8 @@ User.init(
         // make it so our model name stays lowercase in the database
         modelName: 'user'
     }
+
+
 );
 
-module.exports = User; 
+module.exports = User;

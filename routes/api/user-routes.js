@@ -51,11 +51,36 @@ router.post('/', (req,res) => {
     })
 });
 
+router.post('/login', (req,res) => {
+    // first query to see if the email input is tied to a user in the db
+    User.findOne({
+        where: {
+            email: req.body.email
+        }
+    })
+    .then(dbUserData => {
+        if(!dbUserData) {
+            res.status(400).json({ message: 'No user with that email address!' });
+            return;
+        }
+
+        // NOTE: dbUserData is considered an instance of the User class! This means that is has access to the same methods that the User class does.
+
+        if(!validPassword) {
+            res.status(400).json({ message: 'Incorrect password!' });
+            return;
+        }
+
+        res.json( {user: dbUserData , message: 'You are now logged in!'});
+    })
+});
+
 router.put('/:id', (req,res) => {
     // if req.body has the exact key: value pairs that are neccesary, then you can just pass in req.body to the method instead of an object like in the .create().
     // The update combines the create and look up command methods together, the first arguement is a create and the second arguement is the search so:
     // UPDATE users SET username = ? , email = ?, password = ? WHERE id = ?
     User.update(req.body, {
+        individualHooks: true, 
         where: {
             id: req.params.id
         }
