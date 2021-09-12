@@ -1,11 +1,12 @@
 const router = require('express').Router();
-const { Post, User } = require('../../models');
+const { Post, User, Vote } = require('../../models');
+const sequelize = require('../../config/connection');
 
 
 router.get('/', (req, res) => {
     Post.findAll({
         // attributes are the columns we want to see from the post table/model
-        attributes: ['id', 'post_url', 'title', 'created_at'],
+        attributes: ['id', 'post_url', 'title', 'created_at', [sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count'] ],
         order: [['created_at', 'DESC']],
         // include performs a JOIN
         include: [
@@ -27,7 +28,7 @@ router.get('/:id', (req, res) => {
         where: {
             id:  req.params.id
         },
-        attributes: ['id', 'post_url', 'title', 'created_at'], 
+        attributes: ['id', 'post_url', 'title', 'created_at',[sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count']], 
         include: [
             {
                 model: User,
@@ -58,6 +59,19 @@ router.post('/', (req,res) => {
     .catch(err => {
         console.log(err);
         res.status(500).json(err); 
+    });
+});
+
+// This put route has to go before the :id route, otherwise it will think '/upvote' is an id
+router.put('/upvote', (req, res) => {
+//    Custom static method creadte in models/Post.js
+    Post.upvote(req.body, { Vote })
+    .then(updatedPostData => res.json(updatedPostData))
+    .catch(err => {
+        if(err) {
+            console.log(err);
+            res.status(400).json(err); 
+        }
     });
 });
 
@@ -103,6 +117,8 @@ router.delete('/:id', (req, res) => {
         res.status(500).json(err); 
     });
 });
+
+
 
 
 

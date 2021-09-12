@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 // Create our User model 
 
 class User extends Model {
+    // This is an instance method... where we create a method to use during a specific instance of our model?
     checkPassword(loginPw) {
         return bcrypt.compareSync(loginPw, this.password);
     }

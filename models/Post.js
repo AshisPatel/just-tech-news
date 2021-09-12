@@ -2,7 +2,28 @@ const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/connection');
 
 class Post extends Model {
-
+    // This is a method model... based on the actual Post model and not the current running instance of the post model that it would be called on 
+    static upvote(body ,models) {
+        return models.Vote.create({
+            user_id: body.user_id,
+            post_id: body.post_id
+        }).then(() => {
+            return Post.findOne({
+                where: {
+                    id: body.post_id
+                },
+                attributes: [
+                    'id',
+                    'post_url',
+                    'title',
+                    'created_at',
+                    [
+                        sequelize.literal('(SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id)'), 'vote_count'
+                    ]
+                ]
+            });
+        });
+    }
 }
 
 Post.init(
