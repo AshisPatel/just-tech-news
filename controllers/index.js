@@ -1,8 +1,9 @@
 const router = require('express').Router();
-
+const homeRoutes = require('./home-routes.js'); 
 const apiRoutes = require('./api');
 
 router.use('/api',apiRoutes);
+router.use('/', homeRoutes); 
 
 // This will return an error 404 for a request made to any router that doesn't exist like .../api/spaghetti
 router.use((req,res) => {
