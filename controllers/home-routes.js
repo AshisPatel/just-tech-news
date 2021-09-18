@@ -4,6 +4,7 @@ const { Post, User, Comment } = require('../models');
 
 
 router.get('/', (req, res) => {
+    console.log(req.session);
     // perform findAll from sequelize to grab all the data
 
     Post.findAll({
@@ -41,6 +42,14 @@ router.get('/', (req, res) => {
             res.status(500).json(err);
         });
 
+});
+
+router.get('/login', (req,res) => {
+    if (req.session.loggedIn) {
+        res.redirect('/');
+        return; 
+    }
+    res.render('login');
 });
 
 module.exports = router;
