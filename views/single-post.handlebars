@@ -1,15 +1,5 @@
-<article class="post">
-    <div class="title">
-        <a href="{{post.post_url}}" target="_blank">{{post.title}}</a>
-        <span>({{post.post_url}})</span>
-    </div>
-    <div class="meta">
-        {{post.vote_count}} point(s) by {{post.user.username}} on 
-        {{post.created_at}}
-        |
-        <a href="/post/{{post.id}}">{{post.comments.length}} comment(s)</a>
-    </div>
-</article>
+{{!-- using the > 'partial name' will pass the object into the partial --}}
+{{> post-info post }}
 {{!-- if only checks for 'truthy' values, not conditional statements --}}
 {{#if loggedIn}}
 <form class="comment-form">
@@ -23,19 +13,9 @@
     </div>
 </form>
 {{/if}}
-<div class="comments">
-    {{!-- did not use a variable name, but could have said 'as |comment|' --}}
-    {{#each post.comments}}
-    <section class="comment">
-        <div class="meta">
-            {{user.username}} on {{created_at}}
-        </div>
-        <div class="text">
-            {{comment_text}}
-        </div>
-    </section>
-    {{/each}}
-</div>
+
+{{!-- pass into comments partial to populate the comments list --}}
+{{> comments post.comments}}; 
 
 {{!-- include script to upvote and add comment ONLY if the user is loggedIn --}}
 {{#if loggedIn}}
