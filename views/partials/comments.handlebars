@@ -1,0 +1,14 @@
+{{!-- post.comments that is being passed in is an array of comments. These do not have keys that we can reference easily, so we must use the 'this' keyword. I imagine this references the element of the array that we are currently viewing and the element is an object. So this.user.username is a valid key that can be picked up where as post.comments was an array--}}
+<div class="comments">
+    {{!-- did not use a variable name, but could have said 'as |comment|' --}}
+    {{#each this}}
+    <section class="comment">
+        <div class="meta">
+            {{user.username}} on {{format_date created_at}}
+        </div>
+        <div class="text">
+            {{comment_text}}
+        </div>
+    </section>
+    {{/each}}
+</div>

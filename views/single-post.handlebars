@@ -1,0 +1,24 @@
+{{!-- using the > 'partial name' will pass the object into the partial --}}
+{{> post-info post }}
+{{!-- if only checks for 'truthy' values, not conditional statements --}}
+{{#if loggedIn}}
+<form class="comment-form">
+    <div>
+        <textarea name="comment-body"></textarea>
+    </div>
+
+    <div>
+        <button type="submit">add comment</button>
+        <button type="button" class="upvote-btn">upvote</button>
+    </div>
+</form>
+{{/if}}
+
+{{!-- pass into comments partial to populate the comments list --}}
+{{> comments post.comments}}; 
+
+{{!-- include script to upvote and add comment ONLY if the user is loggedIn --}}
+{{#if loggedIn}}
+<script src="/javascript/comment.js"></script>
+<script src="/javascript/upvote.js"></script>
+{{/if}}

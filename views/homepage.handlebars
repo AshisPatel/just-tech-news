@@ -1,0 +1,9 @@
+<ol class="post-list">
+    {{!-- We could pass in #each posts only and it would be able to look at each object in the posts array however, defining it like a forEach is more readable!--}}
+    {{#each posts as |post|}}
+    <li>
+        {{!-- using the > 'partial name' will pass the object into the partial  --}}
+        {{> post-info post }}
+    </li>
+    {{/each}}
+</ol>
