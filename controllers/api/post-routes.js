@@ -80,15 +80,20 @@ router.post('/', (req,res) => {
 
 // This put route has to go before the :id route, otherwise it will think '/upvote' is an id
 router.put('/upvote', (req, res) => {
-//    Custom static method creadte in models/Post.js
-    Post.upvote(req.body, { Vote })
-    .then(updatedPostData => res.json(updatedPostData))
-    .catch(err => {
-        if(err) {
-            console.log(err);
-            res.status(400).json(err); 
-        }
-    });
+    // Make sure the session exists, as in the user is signed in
+    if (req.session) {
+        // pass session id along with all destructured properties on req.body
+        // upvote is a custom method for the post model 
+        Post.upvote({...req.body, user_id: req.session.user_id}, { Vote, Comment, User })
+        .then(updatedPostData => res.json(updatedPostData))
+        .catch(err => {
+            if(err) {
+                console.log(err);
+                res.status(500).json(err); 
+            }
+        });
+    }
+  
 });
 
 router.put('/:id', (req,res) => {
